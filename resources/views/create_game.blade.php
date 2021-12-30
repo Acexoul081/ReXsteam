@@ -47,7 +47,18 @@
             <input type="file" class="custom-file-input" id="trailer" name="trailer" required>
             <label class="custom-file-label" for="trailer">Choose file... trailer</label>
         </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="1" name="adult" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Only for adult?
+            </label>
+        </div>
         <button class="btn btn-primary" name="create" type="submit">Create Game</button>
     </form>
+    @if($errors->any())
+        @foreach ($errors->all() as $error)
+            {{$error}}
+        @endforeach
+    @endif
 </div>
 @endsection

@@ -62,12 +62,18 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <div>
+                                    <a class="nav-link" href="{{ route('cart_show') }}">Cart</a>
+                                </div>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->username }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{route('user_show', ['user'=>Auth::user()->id]);}}">Profile</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -78,6 +84,7 @@
                                         @csrf
                                     </form>
                                 </div>
+                                
                             </li>
                         @endguest
                     </ul>
@@ -88,7 +95,7 @@
         <main class="py-4">
             @yield('content')
         </main>
-        <div>
+        <div class="d-flex justify-content-center">
             <div>
                 2021 ReXsteam. All rights reserved.
             </div>

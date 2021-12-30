@@ -4,13 +4,13 @@
 <div class="container">
     <div class="row justify-content-center">
         @foreach($games as $game)
-            <div class="card">
+            <a href="{{ route('detail_game', ['id'=>$game->id]); }}" class="card px-0 m-2" style="width: 30rem;">
                 <img class="card-img" src="{{Storage::url($game->cover)}}" alt="thumbnail">
                 <div class="card-img-overlay text-white d-flex flex-column justify-content-end align-items-start">
                     <h4 class="card-title">{{$game->name}}</h4>
                     <h6 class="card-subtitle mb-2">{{$game->category}}</h6>
                 </div>
-            </div>
+            </a>
         @endforeach
         <!-- <div class="col-md-8">
             <div class="card">

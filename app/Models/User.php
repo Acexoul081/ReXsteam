@@ -22,6 +22,8 @@ class User extends Authenticatable
         'fullname',
         'password',
         'role',
+        'image',
+        'level'
     ];
 
     /**
@@ -42,4 +44,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    function transactions(){
+        return $this->hasMany(HeaderTransaction::class);
+    }
+
+    // function friends(){
+    //     return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id');
+    // }
+    function friends(){
+        return $this->hasMany(Friend::class, 'user_id', 'id');
+    }
+
+    function friend_reqs(){
+        return $this->hasMany(Friend::class, 'friend_id', 'id');
+    }
 }

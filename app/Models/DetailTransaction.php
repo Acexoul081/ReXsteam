@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Game extends Model
+class DetailTransaction extends Model
 {
     use HasFactory;
-
-    function detail(){
-        return $this->belongsTo(DetailTransaction::class, 'game_id', 'id');
-    }
+    public $timestamps = false;
+    protected $casts = [
+        'transaction_id' => 'string'
+    ];
 }
