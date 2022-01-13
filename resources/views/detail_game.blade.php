@@ -2,6 +2,14 @@
 
 @section('content')
 <div>
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @foreach ($errors->all() as $error)
+                {{$error}}
+            @endforeach
+        </div>
+    @endif
     <div>
         <video src="{{Storage::url($game->trailer)}}" controls></video>
     </div>
@@ -21,6 +29,7 @@
         </div>
     </div>
 </div>
+@if(!isset($user_own) || $user_own != true)
 <div>
     Buy {{$game->name}}
     <div>
@@ -37,6 +46,8 @@
         </form>
     </div>
 </div>
+@endif
+
 <div>
     ABOUT THIS GAME
     <hr>

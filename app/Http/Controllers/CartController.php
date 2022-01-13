@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\HeaderTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\MessageBag;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class CartController extends Controller
 {
     public function index(){
         $cart = $this->getCart();
+        if($cart == null){
+            $errors = new MessageBag();
+            $errors->add('cart_empty', 'Your Cart is Empty!');
+            return view('cart',compact('errors'));
+        }
         return view('cart',compact('cart'));  
     }
 
@@ -24,9 +34,7 @@ class CartController extends Controller
         }
         else
         {
-            $totalcart = "0";
-            echo json_encode(array('totalcart' => $totalcart)); die;
-            return;
+            return null;
         }
     }
 
@@ -34,6 +42,7 @@ class CartController extends Controller
         $id = $request->game;
         if(Cookie::get('cart'))
         {
+            //urus ini 
             $cookie_data = stripslashes(Cookie::get('cart'));
             $cart = json_decode($cookie_data, true);
         }
@@ -42,7 +51,8 @@ class CartController extends Controller
             $cart = array();
         }
         $game = Game::find($id);
-        if($game){
+
+        if($game && !$this->game_in_cart($game, $cart)){
             $item = array(
                 'id' => $game->id,
                 'cover' => $game->cover,
@@ -55,10 +65,20 @@ class CartController extends Controller
             $encode_cart = json_encode($cart);
             $minutes = 120;
             Cookie::queue(Cookie::make('cart', $encode_cart, $minutes));  
+        }else{
+            return back()->withErrors(["exist_cart"=>"This game already in your cart"]);
         }
-        //validasi cart udah keisi belum buat
-        //https://www.fundaofwebit.com/post/how-to-make-shopping-cart-using-cookie-in-laravel-with-ajax-request
+
         return back();
+    }
+
+    private function game_in_cart(Game $game, $cart){
+        foreach($cart as $item){
+            if($item["id"] === $game->id){
+                return true;
+            }
+        }
+        return false;
     }
 
     public function delete(Request $request){
@@ -86,6 +106,6 @@ class CartController extends Controller
 
     public function clear(){
         Cookie::queue(Cookie::forget('cart'));
-        return;
+        return redirect('/');
     }
 }

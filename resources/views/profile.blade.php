@@ -1,7 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        @foreach ($errors->all() as $error)
+            <div>{{$error}}</div>
+        @endforeach
+    </div>
+@endif
 <div class="container d-flex">
+    
     @include('layouts.sidebar')
     <div>
         <div>{{$user->username}} Profile</div>

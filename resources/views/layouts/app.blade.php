@@ -11,6 +11,9 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -18,6 +21,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
 </head>
 <body>
     <div id="app">
@@ -37,12 +41,13 @@
                             {{ __('Home') }}
                         </a>
                     </ul>
+                    @if(Auth::user() && Auth::user()->role === 'Admin')
                     <ul class="navbar-nav me-auto">
                         <a class="navbar-brand" href="{{ url('/manageGame') }}">
                             {{ __('Manage Game') }}
                         </a>
                     </ul>
-
+                    @endif
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
@@ -72,8 +77,16 @@
                                     {{ Auth::user()->username }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{route('user_show', ['user'=>Auth::user()->id]);}}">Profile</a>
+                                    @if(Auth::user() && Auth::user()->role === 'Member')
+                                        <a href="{{route('user_friend', ['user'=>Auth::user()->id])}}" class="dropdown-item">
+                                        Friends
+                                        </a>
+                                        <a href="{{route('user_transaction', ['user'=>Auth::user()->id])}}" class="dropdown-item">
+                                        Transaction History
+                                        </a>
+                                    @endif
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

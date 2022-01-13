@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function sessionAge(Request $request){
+        session()->put('age_verified', $request->datebirth);
+        return back();
+    }
     public function getFriend(User $user){
-        // dd($user->friends->toArray());
-        //https://stackoverflow.com/questions/61410592/laravel-filter-array-based-on-element-value
         $friends_incoming = Friend::where(
             'friend_id', $user->id
         );
@@ -30,10 +32,6 @@ class UserController extends Controller
         $friends = $user->friends->filter(function ($item) {
             return $item->status === 'accepted';
         });
-
-        // $friends = Arr::where($user->friends->toArray(), function ($value, $key) {
-        //     return $value['status'] === 'accepted';
-        // });
         $accepted = [];
         foreach($friends_accepted as $c){
             $accepted[] = $c->user;
@@ -42,7 +40,8 @@ class UserController extends Controller
             $accepted[] = $c->friend;
         }
         $friends = $accepted;
-        return view('friend', compact('friends', 'incomings', 'pendings'));
+        $active = "friends";
+        return view('friend', compact('friends', 'incomings', 'pendings', 'active'));
     }
 
     public function cancelFriend(Request $request, User $user){
@@ -69,7 +68,8 @@ class UserController extends Controller
     public function getTransaction(User $user){
         // dd($user->transactions[0]->games);
         $transactions = $user->transactions;
-        return view('history', compact('transactions'));
+        $active = 'transaction';
+        return view('history', compact('transactions', 'active'));
     }
 
     public function addFriend(Request $request, User $user){
@@ -125,7 +125,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('profile', compact('user'));
+        $active = 'profile';
+        return view('profile', compact('user', 'active'));
     }
 
     /**
@@ -148,25 +149,34 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if($user->fullname !== $request->fullname){
-            $user->fullname = $request->fullname;
-        }
-        if($user->username !== $request->username){
-            $user->username = $request->username;
-        }
-        if($user->level !== $request->level){
-            $user->level = $request->level;
-        }
-        if($request->file('image')!==null){
-            $img_path = $request->file('image')->store('public/images');
-            $user->image = $img_path;
-        }
+        $request->validate([
+            'fullname' => 'required',
+            'curr_pass' => 'required|alpha_num|min:6',
+            'new_pass' => 'nullable|confirmed|alpha_num|min:6',
+            'image' => 'file|mimes:image/jpg,image/png|max:100'
+        ]);
+
         if($request->curr_pass !== null){
-            if(Hash::check($request->password, $user->password)){
-                $user->password = Hash::make($request->new_pass);
+            if($user && Hash::check($request->curr_pass, $user->password)){
+                if($user->fullname !== $request->fullname){
+                    $user->fullname = $request->fullname;
+                }
+                if($user->username !== $request->username){
+                    $user->username = $request->username;
+                }
+                if($user->level !== $request->level){
+                    $user->level = $request->level;
+                }
+                if($request->file('image')!==null){
+                    $img_path = $request->file('image')->store('public/images');
+                    $user->image = $img_path;
+                }
+                if($request->new_pass !== ''){
+                    $user->password = Hash::make($request->new_pass);  
+                }
+                $user->save();
             }
         }
-        $user->save();
         return back(); 
     }
 

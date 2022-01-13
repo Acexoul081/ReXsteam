@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateHeaderTransactionRequest;
 use App\Models\DetailTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 
 class HeaderTransactionController extends Controller
@@ -43,10 +44,28 @@ class HeaderTransactionController extends Controller
     public function store(StoreHeaderTransactionRequest $request)
     {
         $request->validate([
-            'card_name' => 'required|string|min:6',
-            'card_number' => 'required',
-            'month',
-            'year'
+            'card_name' => ['required','string','min:6'],
+            'card_number' => ['required','string','size:19',
+                function($attribute, $value, $fail){
+                    for ($i = 0; $i < strlen($value); $i++){
+                        if($i == 4 || $i == 9 || $i == 14){
+                            if($value[$i] !== ' '){
+                                $fail("The ".$attribute." format '0000 0000 0000 0000'");
+                            }
+                        }
+                        else{
+                            if(!is_numeric($value[$i])){
+                                $fail("The ".$attribute." has value that is not number in a number-required place");
+                            }
+                        }
+                    }
+                }
+            ],
+            'month' => ['required', 'integer','between:1,12'],
+            'year' => ['required', 'integer','between:2021,2050'],
+            'cvc' => ['required', 'numeric', 'digits_between:3,4'],
+            'country' => ['required'],
+            'zip' => ['required', 'numeric']
         ]);
 
         $cart = (new CartController)->getCart();

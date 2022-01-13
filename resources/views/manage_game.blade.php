@@ -47,6 +47,7 @@
                         <h6 class="card-subtitle mb-2">{{$game->category}}</h6>
                     </div>
                 </a>
+                <!-- kasih modal untuk delete -->
                 <form method="post" action= "{{ route('delete_game', ['game'=>$game->id]); }}">
                     @csrf
                     @method('DELETE')

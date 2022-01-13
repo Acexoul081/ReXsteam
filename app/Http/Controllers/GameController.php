@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use App\Models\HeaderTransaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\MessageBag;
+
+use function PHPUnit\Framework\isEmpty;
 
 class GameController extends Controller
 {
@@ -27,6 +32,24 @@ class GameController extends Controller
         }
         $searchs = $searchs->paginate(8);
         return view('manage_game', ['searchs'=>$searchs]);
+    }
+
+    public function search(Request $request){
+        if ($request::get('search')) {
+            $searchs = DB::table('games');
+            $searchs->where(
+                'name', 'like', '%'.$request::get('search').'%',
+            );
+            $games = $searchs->get();
+        }else{
+            $games = Game::all();
+        }
+        if($games->isEmpty()){
+            $errors = new MessageBag();
+            $errors->add('no_games', 'There are no games content can be showed right now!');
+            return view('home', compact('errors'));
+        }
+        return view('home', compact('games'));
     }
     /**
      * Display a listing of the resource.
@@ -58,13 +81,13 @@ class GameController extends Controller
     public function store(StoreGameRequest $request)
     {
         $request->validate([
-            'name'=> 'required',
-            'description' => 'required',
-            'long_description' => 'required',
+            'name'=> 'required|string|unique:games',
+            'description' => 'required|string|max:500',
+            'long_description' => 'required|string|max:2000',
             'category' => 'required',
             'developer' => 'required',
             'publisher' => 'required',
-            'price' => 'required',
+            'price' => 'required|numeric|max:1000000',
             'image'=> 'file|mimes:jpg|max:100',
             'trailer'=> 'file|mimes:webm|max:102400'
         ]);
@@ -102,7 +125,20 @@ class GameController extends Controller
     public function show($id)
     {
         $game = Game::find($id);
+        if($this->user_own($game)){
+            return view('detail_game', compact('game'))->with(["user_own"=>true]);
+        }
         return view('detail_game', compact('game'));
+    }
+
+    private function user_own(Game $game){
+        $header = HeaderTransaction::where('user_id', Auth::user()->id)->first();
+        foreach($header->details as $detail){
+            if($detail->game_id === $game->id){
+                return True;
+            }
+        }
+        return false;
     }
 
     /**
@@ -125,6 +161,14 @@ class GameController extends Controller
      */
     public function update(UpdateGameRequest $request, Game $game)
     {
+        $request->validate([
+            'description' => 'required|string|max:500',
+            'long_description' => 'required|string|max:2000',
+            'category' => 'required',
+            'price' => 'required|numeric|max:1000000',
+            'image'=> 'file|mimes:jpg|max:100',
+            'trailer'=> 'file|mimes:webm|max:102400'
+        ]);
         $img_path = $request->file('image')->store('public/images');
         $vid_path = $request->file('trailer')->store('public/videos');
 

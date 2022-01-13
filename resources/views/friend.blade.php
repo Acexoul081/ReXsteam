@@ -27,8 +27,8 @@
                         <div class="card-body">
                             <h5 class="card-title">{{$incoming->user->username}}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{$incoming->user->role}}</h6>
-                            <!-- level, gambar jgn lupa -->
-                            <p class="card-text">{{12}}</p>
+                            <img src="{{Storage::url($incoming->user->image)}}" class="rounded-circle" alt="user_image">
+                            <p class="card-text">{{$incoming->user->level}}</p>
                             <form action="{{route('response_friend', ['user'=>Auth::user()->id])}}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -45,11 +45,11 @@
             <div>
                 @foreach($pendings as $pending)
                     <div class="card" style="width: 18rem;">
-                        <div class="card-body">
+                        <div class="card-body mw-100">
                             <h5 class="card-title">{{$pending->friend->username}}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{$pending->friend->role}}</h6>
-                            <!-- level, gambar jgn lupa -->
-                            <p class="card-text">{{12}}</p>
+                            <h6 class="card-subtitle mb-2 text-muted">{{$pending->friend->role}}</h6>  
+                            <img src="{{Storage::url($pending->friend->image)}}" class="rounded-circle" alt="user_image">
+                            <p class="card-text">{{$pending->friend->level}}</p>
                             <form action="{{route('cancel_friend', ['user'=>Auth::user()->id])}}" method="post">
                                 @csrf
                                 @method('DELETE')
@@ -69,8 +69,8 @@
                         <div class="card-body">
                             <h5 class="card-title">{{$friend->username}}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{$friend->role}}</h6>
-                            <!-- level, gambar jgn lupa -->
-                            <p class="card-text">{{12}}</p>
+                            <img src="{{Storage::url($friend->image)}}" class="rounded-circle" alt="user_image">
+                            <p class="card-text">{{$friend->level}}</p>
                         </div>
                     </div>
                 @endforeach

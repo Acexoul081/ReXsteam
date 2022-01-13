@@ -52,26 +52,26 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'fullname' => ['required', 'string'],
             'username' => ['required', 'string', 'min:6', 'unique:users'],
-            'password' => ['required', 'string', 'min:6',
-                function ($attribute, $value, $fail){
-                    $isalpha = false;
-                    $isnum = false;
-                    $arrchar = str_split($value);
-                    foreach ($arrchar as $char){
-                        if (ctype_alpha($char)){
-                            $isalpha = true;
-                        }
-                        else if (ctype_digit($char)){
-                            $isnum = true;
-                        }
-                        else{
-                            $fail("The ".$attribute." must be Alphanumeric");
-                        }
-                    }
-                    if(!$isalpha || !$isnum){
-                        $fail("The ".$attribute." must be Alphanumeric");
-                    }
-                }
+            'password' => ['required', 'string', 'min:6','alpha_num'
+                // function ($attribute, $value, $fail){
+                //     $isalpha = false;
+                //     $isnum = false;
+                //     $arrchar = str_split($value);
+                //     foreach ($arrchar as $char){
+                //         if (ctype_alpha($char)){
+                //             $isalpha = true;
+                //         }
+                //         else if (ctype_digit($char)){
+                //             $isnum = true;
+                //         }
+                //         else{
+                //             $fail("The ".$attribute." must be Alphanumeric");
+                //         }
+                //     }
+                //     if(!$isalpha || !$isnum){
+                //         $fail("The ".$attribute." must be Alphanumeric");
+                //     }
+                // }
             ],
             'role' => ['required', 'string',
                 function ($attribute, $value, $fail){
