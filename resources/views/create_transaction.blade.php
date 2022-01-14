@@ -50,12 +50,12 @@
         </div>
         Total Price: {{$total_price}}
 
-        <form action="{{ route('cancel_transaction') }}" method="post">
-            @csrf
-            @method('DELETE')
-            <button class="btn btn-danger" type="submit">Cancel</button>
-        </form>
         <button class="btn btn-primary" type="submit">Checkout</button>
+    </form>
+    <form action="{{ route('cancel_transaction') }}" method="post">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-danger" type="submit">Cancel</button>
     </form>
 </div>
 @endsection

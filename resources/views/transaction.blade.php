@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@php
+    $total_price = 0;
+    foreach($cart as $item){
+        $total_price+=$item['price'];
+    }
+@endphp
+
 @section('content')
     <div>
         Transaction ID: {{$header->id}}
@@ -22,7 +29,7 @@
             </div>
         @endforeach
         <div>
-            Total Price: 
+            Total Price: {{$total_price}}
         </div>
     </div>
     

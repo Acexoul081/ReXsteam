@@ -132,12 +132,18 @@ class GameController extends Controller
     }
 
     private function user_own(Game $game){
-        $header = HeaderTransaction::where('user_id', Auth::user()->id)->first();
-        foreach($header->details as $detail){
-            if($detail->game_id === $game->id){
-                return True;
+        $headers = HeaderTransaction::where('user_id', Auth::user()->id)->get();
+        if($headers->isEmpty()){
+            return false;
+        }
+        foreach($headers as $header){
+            foreach($header->details as $detail){
+                if($detail->game_id === $game->id){
+                    return True;
+                }
             }
         }
+        
         return false;
     }
 

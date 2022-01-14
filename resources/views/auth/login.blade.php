@@ -61,7 +61,7 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Login') }}
                                 </button>
-<!-- password.request tuh apaan? -->
+
                                 @if (Route::has('register'))
                                     <a class="btn btn-link" href="{{ route('register') }}">
                                         {{ __("Don't have an account?") }}

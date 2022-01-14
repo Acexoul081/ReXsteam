@@ -24,7 +24,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/search', [GameController::class, 'search'])->name('search');
 
-// Route::middleware(['role:Admin'])->group(function(){
+Route::middleware(['role:Admin'])->group(function(){
     Route::get('/manageGame', [GameController::class, 'manage'])->name('manage_game');
     Route::post('/manageGame', [GameController::class, 'searchManage'])->name('manage_search');
     Route::get('/createGame', [GameController::class, 'create'])->name('add_game');
@@ -32,7 +32,7 @@ Route::get('/search', [GameController::class, 'search'])->name('search');
     Route::post('/game/{game}', [GameController::class, 'edit'])->name('edit_game');
     Route::put('/game/{game}', [GameController::class, 'update'])->name('update_game');
     Route::delete('/game/{game}', [GameController::class, 'destroy'])->name('delete_game');
-// });
+});
 
 Route::get('/game/{id}', [GameController::class, 'show'])->name('detail_game')->middleware('adult');
 Route::post('/validateage', [UserController::class, 'sessionAge'])->name('validate_age');
